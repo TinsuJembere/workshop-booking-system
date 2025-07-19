@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Booking" ADD COLUMN     "amountPaid" DOUBLE PRECISION NOT NULL DEFAULT 0;

@@ -1,0 +1,8 @@
+@import "tailwindcss";
+
+select.category-select option {
+  color: #222; /* black for dropdown options */
+}
+select.category-select {
+  color: #fff; /* white for selected value */
+}
