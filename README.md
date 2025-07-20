@@ -39,8 +39,8 @@ A full-stack web application for managing and booking workshops, with separate c
 
 ### 1. Clone the repository
 ```bash
-git clone <your-repo-url>
-cd <your-repo-folder>
+git clone https://github.com/TinsuJembere/workshop-booking-system
+cd workshop-booking-system
 ```
 
 ### 2. Install dependencies
