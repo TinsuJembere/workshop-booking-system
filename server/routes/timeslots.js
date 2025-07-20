@@ -22,8 +22,14 @@ router.get('/', async (req, res) => {
     };
     let slots = await prisma.timeSlot.findMany({
       where,
-      include: { workshop: true },
-      orderBy: { startTime: 'asc' },
+      include: { 
+        workshop: true,
+        bookings: { 
+          where: { deleted: false },
+          include: { user: true }
+        }
+      },
+      orderBy: { createdAt: 'desc' },
     });
     // Filter by status (Available/Booked)
     if (status === 'Available') slots = slots.filter(s => s.availableSpots > 0);
@@ -38,6 +44,7 @@ router.get('/', async (req, res) => {
     }
     res.json(slots);
   } catch (err) {
+    console.error('Error fetching time slots:', err);
     res.status(500).json({ error: 'Failed to fetch time slots' });
   }
 });
@@ -48,10 +55,17 @@ router.post('/', async (req, res) => {
     const data = timeSlotSchema.parse(req.body);
     const slot = await prisma.timeSlot.create({
       data,
-      include: { workshop: true },
+      include: { 
+        workshop: true,
+        bookings: { 
+          where: { deleted: false },
+          include: { user: true }
+        }
+      },
     });
     res.json(slot);
   } catch (err) {
+    console.error('Error creating time slot:', err);
     res.status(400).json({ error: err.errors ? err.errors[0].message : 'Failed to create time slot' });
   }
 });
@@ -64,10 +78,17 @@ router.put('/:id', async (req, res) => {
     const slot = await prisma.timeSlot.update({
       where: { id },
       data,
-      include: { workshop: true },
+      include: { 
+        workshop: true,
+        bookings: { 
+          where: { deleted: false },
+          include: { user: true }
+        }
+      },
     });
     res.json(slot);
   } catch (err) {
+    console.error('Error updating time slot:', err);
     res.status(400).json({ error: err.errors ? err.errors[0].message : 'Failed to update time slot' });
   }
 });
@@ -82,6 +103,7 @@ router.delete('/:id', async (req, res) => {
     });
     res.json({ message: 'Time slot deleted' });
   } catch (err) {
+    console.error('Error deleting time slot:', err);
     res.status(400).json({ error: 'Failed to delete time slot' });
   }
 });

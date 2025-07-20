@@ -1,1 +1,58 @@
 @import "tailwindcss";
+html, body, #root {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+/* Responsive container utility */
+.responsive-container {
+  width: 100%;
+  max-width: 1440px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+/* Ensure tables and boxes are responsive */
+table {
+  width: 100%;
+  overflow-x: auto;
+  display: block;
+}
+
+.MuiPaper-root, .MuiBox-root {
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+/* Responsive typography for headings */
+h1, h2, h3, h4, h5, h6 {
+  word-break: break-word;
+  font-size: clamp(1rem, 2vw, 2.25rem);
+}
+
+/* Responsive grid tweaks */
+@media (max-width: 900px) {
+  .responsive-container {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+  .MuiGrid-root {
+    flex-direction: column !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .responsive-container {
+    padding-left: 2px;
+    padding-right: 2px;
+  }
+  .MuiPaper-root, .MuiBox-root {
+    padding: 8px !important;
+  }
+  .MuiTableCell-root {
+    padding: 4px !important;
+    font-size: 0.9rem;
+  }
+}

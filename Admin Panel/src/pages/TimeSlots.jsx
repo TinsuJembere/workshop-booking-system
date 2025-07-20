@@ -23,7 +23,13 @@ const TimeSlots = () => {
   const [openModal, setOpenModal] = useState(false);
   const [modalMode, setModalMode] = useState("add");
   const [selectedSlot, setSelectedSlot] = useState(null);
-  const [form, setForm] = useState({ workshopId: "", startTime: "", endTime: "", availableSpots: 1 });
+  const [form, setForm] = useState({ 
+    workshopId: "", 
+    startTime: "", 
+    endTime: "", 
+    availableSpots: 1 
+  });
+  const [formErrors, setFormErrors] = useState({});
   const [saving, setSaving] = useState(false);
   const [search, setSearch] = useState("");
   const [filterWorkshop, setFilterWorkshop] = useState("");
@@ -38,7 +44,12 @@ const TimeSlots = () => {
       setError("");
       try {
         const [wsRes, tsRes] = await Promise.all([
-          axios.get("/api/workshops", { headers: { ...getAuthHeader() } }),
+          axios.get("/api/workshops", { 
+            headers: { 
+              ...getAuthHeader(),
+              'x-admin-panel': 'true'
+            } 
+          }),
           axios.get("/api/timeslots", { headers: { ...getAuthHeader() } })
         ]);
         setWorkshops(Array.isArray(wsRes.data.workshops) ? wsRes.data.workshops : []);
@@ -74,25 +85,70 @@ const TimeSlots = () => {
   const bookedSlots = slots.filter(s => s.availableSpots === 0).length;
   const upcomingSlots = slots.filter(s => new Date(s.startTime) > new Date()).length;
 
+  // Form validation
+  const validateForm = () => {
+    const errors = {};
+    if (!form.workshopId) errors.workshopId = "Workshop is required";
+    if (!form.startTime) errors.startTime = "Start time is required";
+    if (!form.endTime) errors.endTime = "End time is required";
+    if (form.availableSpots < 0) errors.availableSpots = "Available spots must be 0 or more";
+    
+    // Time validation
+    if (form.startTime && form.endTime) {
+      const startTime = new Date(`2000-01-01 ${form.startTime}`);
+      const endTime = new Date(`2000-01-01 ${form.endTime}`);
+      if (startTime >= endTime) {
+        errors.endTime = "End time must be after start time";
+      }
+    }
+    
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   // Handlers
   const handleOpenModal = (mode, slot = null) => {
     setModalMode(mode);
     setSelectedSlot(slot);
     setForm(
       slot
-        ? { ...slot, workshopId: slot.workshopId }
-        : { workshopId: "", startTime: "", endTime: "", availableSpots: 1 }
+        ? { 
+            ...slot, 
+            workshopId: slot.workshopId,
+            availableSpots: Number(slot.availableSpots)
+          }
+        : { 
+            workshopId: "", 
+            startTime: "", 
+            endTime: "", 
+            availableSpots: 1 
+          }
     );
+    setFormErrors({});
     setOpenModal(true);
   };
+  
   const handleCloseModal = () => {
     setOpenModal(false);
     setSelectedSlot(null);
+    setFormErrors({});
   };
+  
   const handleFormChange = e => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setForm({ 
+      ...form, 
+      [name]: name === 'availableSpots' ? Number(value) : value 
+    });
+    // Clear error when user starts typing
+    if (formErrors[name]) {
+      setFormErrors({ ...formErrors, [name]: "" });
+    }
   };
+  
   const handleSave = async () => {
+    if (!validateForm()) return;
+    
     setSaving(true);
     setError("");
     try {
@@ -111,6 +167,7 @@ const TimeSlots = () => {
       setSaving(false);
     }
   };
+  
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this time slot?")) return;
     setError("");
@@ -280,15 +337,60 @@ const TimeSlots = () => {
       <Dialog open={openModal} onClose={handleCloseModal} maxWidth="sm" fullWidth>
         <DialogTitle>{modalMode === "add" ? "Add New Time Slot" : "Edit Time Slot"}</DialogTitle>
         <DialogContent>
-          <TextField select label="Workshop" name="workshopId" value={form.workshopId} onChange={handleFormChange} fullWidth margin="normal" required>
+          <TextField 
+            select 
+            label="Workshop" 
+            name="workshopId" 
+            value={form.workshopId} 
+            onChange={handleFormChange} 
+            fullWidth 
+            margin="normal" 
+            required
+            error={!!formErrors.workshopId}
+            helperText={formErrors.workshopId}
+          >
             <MenuItem value="">Select Workshop</MenuItem>
             {workshops.map(w => (
               <MenuItem key={w.id} value={w.id}>{w.title}</MenuItem>
             ))}
           </TextField>
-          <TextField label="Start Time" name="startTime" value={form.startTime} onChange={handleFormChange} fullWidth margin="normal" required placeholder="e.g. 09:00 AM" />
-          <TextField label="End Time" name="endTime" value={form.endTime} onChange={handleFormChange} fullWidth margin="normal" required placeholder="e.g. 11:00 AM" />
-          <TextField label="Available Spots" name="availableSpots" type="number" value={form.availableSpots} onChange={handleFormChange} fullWidth margin="normal" required inputProps={{ min: 0 }} />
+          <TextField 
+            label="Start Time" 
+            name="startTime" 
+            value={form.startTime} 
+            onChange={handleFormChange} 
+            fullWidth 
+            margin="normal" 
+            required 
+            placeholder="e.g. 09:00 AM"
+            error={!!formErrors.startTime}
+            helperText={formErrors.startTime}
+          />
+          <TextField 
+            label="End Time" 
+            name="endTime" 
+            value={form.endTime} 
+            onChange={handleFormChange} 
+            fullWidth 
+            margin="normal" 
+            required 
+            placeholder="e.g. 11:00 AM"
+            error={!!formErrors.endTime}
+            helperText={formErrors.endTime}
+          />
+          <TextField 
+            label="Available Spots" 
+            name="availableSpots" 
+            type="number" 
+            value={form.availableSpots} 
+            onChange={handleFormChange} 
+            fullWidth 
+            margin="normal" 
+            required 
+            inputProps={{ min: 0 }}
+            error={!!formErrors.availableSpots}
+            helperText={formErrors.availableSpots}
+          />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseModal} disabled={saving}>Cancel</Button>

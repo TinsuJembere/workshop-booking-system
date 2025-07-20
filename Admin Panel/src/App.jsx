@@ -8,6 +8,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Layout from "./components/Layout";
 import { AuthProvider, AuthContext } from "./utils/AuthContext";
+import Users from "./pages/Users";
 
 // PrivateRoute wrapper
 function PrivateRoute() {
@@ -42,6 +43,7 @@ function App() {
               <Route path="/workshops" element={<Workshops />} />
               <Route path="/timeslots" element={<TimeSlots />} />
               <Route path="/bookings" element={<Bookings />} />
+              <Route path="/users" element={<Users />} />
             </Route>
           </Route>
           {/* Redirect / to /dashboard if authenticated, else to /login */}

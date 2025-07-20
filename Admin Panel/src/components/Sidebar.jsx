@@ -5,6 +5,7 @@ import EventNoteIcon from "@mui/icons-material/EventNote";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import BookOnlineIcon from "@mui/icons-material/BookOnline";
 import LogoutIcon from "@mui/icons-material/Logout";
+import PeopleIcon from '@mui/icons-material/People';
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../utils/AuthContext";
 import { Avatar, Typography, Box } from "@mui/material";
@@ -14,6 +15,7 @@ const menuItems = [
   { text: "Workshops", icon: <EventNoteIcon />, path: "/workshops" },
   { text: "Time Slots", icon: <AccessTimeIcon />, path: "/timeslots" },
   { text: "Bookings", icon: <BookOnlineIcon />, path: "/bookings" },
+  { text: "Users", icon: <PeopleIcon />, path: "/users" },
 ];
 
 const Sidebar = () => {

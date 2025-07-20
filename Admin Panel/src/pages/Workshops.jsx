@@ -28,7 +28,18 @@ const Workshops = () => {
   const [openModal, setOpenModal] = useState(false);
   const [modalMode, setModalMode] = useState("add");
   const [selectedWorkshop, setSelectedWorkshop] = useState(null);
-  const [form, setForm] = useState({ title: "", instructor: "", date: "", maxCapacity: 1, status: "Active" });
+  const [form, setForm] = useState({ 
+    title: "", 
+    description: "", 
+    instructor: "", 
+    date: "", 
+    maxCapacity: 1, 
+    status: "Active",
+    category: "",
+    price: 0,
+    image: ""
+  });
+  const [imageFile, setImageFile] = useState(null);
   const [saving, setSaving] = useState(false);
   const { getAuthHeader } = useContext(AuthContext);
 
@@ -38,7 +49,12 @@ const Workshops = () => {
       setLoading(true);
       setError("");
       try {
-        const res = await axios.get("/api/workshops", { headers: { ...getAuthHeader() } });
+        const res = await axios.get("/api/workshops", { 
+          headers: { 
+            ...getAuthHeader(),
+            'x-admin-panel': 'true'
+          } 
+        });
         setWorkshops(Array.isArray(res.data.workshops) ? res.data.workshops : []);
       } catch (err) {
         setError(err.response?.data?.message || err.message || "Failed to load workshops.");
@@ -55,35 +71,79 @@ const Workshops = () => {
   const draftWorkshops = Array.isArray(workshops) ? workshops.filter(w => w.status === "Draft").length : 0;
   const timeSlotsAssigned = Array.isArray(workshops) ? workshops.reduce((sum, w) => sum + (w.timeSlots?.length || 0), 0) : 0;
 
-  // Handlers (unchanged)
+  // Handlers
   const handleOpenModal = (mode, workshop = null) => {
     setModalMode(mode);
     setSelectedWorkshop(workshop);
     setForm(
       workshop
-        ? { ...workshop, date: workshop.date ? workshop.date.split("T")[0] : "" }
-        : { title: "", instructor: "", date: "", maxCapacity: 1, status: "Active" }
+        ? { 
+            ...workshop, 
+            date: workshop.date ? workshop.date.split("T")[0] : "",
+            description: workshop.description || "",
+            instructor: workshop.instructor || "",
+            category: workshop.category || "",
+            price: workshop.price || 0,
+            image: workshop.image || ""
+          }
+        : { 
+            title: "", 
+            description: "", 
+            instructor: "", 
+            date: "", 
+            maxCapacity: 1, 
+            status: "Active",
+            category: "",
+            price: 0,
+            image: ""
+          }
     );
+    setImageFile(null);
     setOpenModal(true);
   };
+  
   const handleCloseModal = () => {
     setOpenModal(false);
     setSelectedWorkshop(null);
   };
+  
   const handleFormChange = e => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value, type, files } = e.target;
+    if (type === 'file') {
+      setImageFile(files[0]);
+      // Optionally, update form.image for preview
+      setForm({ ...form, image: URL.createObjectURL(files[0]) });
+    } else {
+      setForm({ ...form, [name]: name === 'maxCapacity' || name === 'price' ? Number(value) : value });
+    }
   };
+  
   const handleSave = async () => {
     setSaving(true);
     setError("");
     try {
+      const formData = new FormData();
+      Object.entries(form).forEach(([key, value]) => {
+        if (key === 'image') return; // handled by file
+        formData.append(key, value);
+      });
+      if (imageFile) {
+        formData.append('image', imageFile);
+      } else if (form.image && typeof form.image === 'string' && form.image.startsWith('/uploads/')) {
+        formData.append('image', form.image);
+      }
       if (modalMode === "add") {
-        await axios.post("/api/workshops", form, { headers: { ...getAuthHeader() } });
+        await axios.post("/api/workshops", formData, { headers: { ...getAuthHeader(), 'Content-Type': 'multipart/form-data' } });
       } else if (modalMode === "edit" && selectedWorkshop) {
-        await axios.put(`/api/workshops/${selectedWorkshop.id}`, form, { headers: { ...getAuthHeader() } });
+        await axios.put(`/api/workshops/${selectedWorkshop.id}`, formData, { headers: { ...getAuthHeader(), 'Content-Type': 'multipart/form-data' } });
       }
       // Refresh
-      const res = await axios.get("/api/workshops", { headers: { ...getAuthHeader() } });
+      const res = await axios.get("/api/workshops", { 
+        headers: { 
+          ...getAuthHeader(),
+          'x-admin-panel': 'true'
+        } 
+      });
       setWorkshops(Array.isArray(res.data.workshops) ? res.data.workshops : []);
       handleCloseModal();
     } catch (err) {
@@ -92,18 +152,25 @@ const Workshops = () => {
       setSaving(false);
     }
   };
+  
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this workshop?")) return;
     setError("");
     try {
       await axios.delete(`/api/workshops/${id}`, { headers: { ...getAuthHeader() } });
       // Refresh
-      const res = await axios.get("/api/workshops", { headers: { ...getAuthHeader() } });
+      const res = await axios.get("/api/workshops", { 
+        headers: { 
+          ...getAuthHeader(),
+          'x-admin-panel': 'true'
+        } 
+      });
       setWorkshops(Array.isArray(res.data.workshops) ? res.data.workshops : []);
     } catch (err) {
       setError(err.response?.data?.message || err.message || "Failed to delete workshop.");
     }
   };
+  
   const handleManageTime = (id) => {
     window.location.href = `/timeslots?workshopId=${id}`;
   };
@@ -156,10 +223,13 @@ const Workshops = () => {
             <Table size="small">
               <TableHead>
                 <TableRow>
+                  <TableCell>Image</TableCell>
                   <TableCell>Title</TableCell>
+                  <TableCell>Description</TableCell>
                   <TableCell>Instructor</TableCell>
                   <TableCell>Date</TableCell>
                   <TableCell>Capacity</TableCell>
+                  <TableCell>Price</TableCell>
                   <TableCell>Time Slots</TableCell>
                   <TableCell>Status</TableCell>
                   <TableCell>Actions</TableCell>
@@ -168,10 +238,15 @@ const Workshops = () => {
               <TableBody>
                 {Array.isArray(workshops) && workshops.map((w) => (
                   <TableRow key={w.id}>
+                    <TableCell>
+                      {w.image ? <img src={w.image} alt={w.title} style={{ width: 60, height: 40, objectFit: 'cover', borderRadius: 4 }} /> : '-'}
+                    </TableCell>
                     <TableCell>{w.title}</TableCell>
+                    <TableCell>{w.description || '-'}</TableCell>
                     <TableCell>{w.instructor || '-'}</TableCell>
                     <TableCell>{w.date ? new Date(w.date).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) : '-'}</TableCell>
                     <TableCell>{w.maxCapacity}</TableCell>
+                    <TableCell>${w.price || 0}</TableCell>
                     <TableCell>{w.timeSlots?.length || 0}</TableCell>
                     <TableCell>
                       <Chip label={statusLabels[w.status] || w.status} color={statusColors[w.status] || 'default'} size="small" variant="outlined" />
@@ -199,14 +274,37 @@ const Workshops = () => {
         <DialogTitle>{modalMode === "add" ? "Add New Workshop" : "Edit Workshop"}</DialogTitle>
         <DialogContent>
           <TextField label="Title" name="title" value={form.title} onChange={handleFormChange} fullWidth margin="normal" required />
+          <TextField label="Description" name="description" value={form.description} onChange={handleFormChange} fullWidth margin="normal" multiline rows={3} />
           <TextField label="Instructor" name="instructor" value={form.instructor} onChange={handleFormChange} fullWidth margin="normal" />
+          <TextField label="Category" name="category" value={form.category} onChange={handleFormChange} fullWidth margin="normal" />
           <TextField label="Date" name="date" type="date" value={form.date} onChange={handleFormChange} fullWidth margin="normal" InputLabelProps={{ shrink: true }} required />
           <TextField label="Capacity" name="maxCapacity" type="number" value={form.maxCapacity} onChange={handleFormChange} fullWidth margin="normal" required inputProps={{ min: 1 }} />
+          <TextField label="Price" name="price" type="number" value={form.price} onChange={handleFormChange} fullWidth margin="normal" inputProps={{ min: 0, step: 0.01 }} />
           <TextField select label="Status" name="status" value={form.status} onChange={handleFormChange} fullWidth margin="normal">
             <MenuItem value="Active">Active</MenuItem>
             <MenuItem value="Completed">Completed</MenuItem>
             <MenuItem value="Draft">Draft</MenuItem>
           </TextField>
+          <Box mt={2} mb={2}>
+            <input
+              accept="image/*"
+              style={{ display: 'none' }}
+              id="workshop-image-upload"
+              type="file"
+              name="image"
+              onChange={handleFormChange}
+            />
+            <label htmlFor="workshop-image-upload">
+              <Button variant="outlined" component="span">
+                {imageFile ? 'Change Image' : 'Upload Image'}
+              </Button>
+            </label>
+            {(form.image && (typeof form.image === 'string')) && (
+              <Box mt={1}>
+                <img src={form.image} alt="Workshop" style={{ width: 120, height: 80, objectFit: 'cover', borderRadius: 4 }} />
+              </Box>
+            )}
+          </Box>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseModal} disabled={saving}>Cancel</Button>

@@ -83,7 +83,13 @@ const BookingConfirmed = () => {
             <h2 className="text-xl font-semibold">Booking Confirmed!</h2>
           </div>
           <p className="mb-4 text-gray-600">Your reservation for the workshop has been successfully confirmed.</p>
-          <img src={booking.workshop.image || "/1.png"} alt="Workshop" className="rounded-lg w-full h-48 object-cover mb-4" />
+          <img src={
+            booking.workshop.image
+              ? booking.workshop.image.startsWith('/uploads/')
+                ? 'http://localhost:5000' + booking.workshop.image
+                : booking.workshop.image
+              : '/1.png'
+          } alt="Workshop" className="rounded-lg w-full h-48 object-cover mb-4" />
           <h3 className="text-lg font-bold mb-2">{booking.workshop.title}</h3>
           <div className="flex items-center text-gray-500 text-sm mb-2">
             <svg className="mr-1" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M8 7V3M16 7V3M4 11h16M5 19h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2z"/></svg>

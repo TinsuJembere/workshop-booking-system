@@ -156,7 +156,13 @@ const MyBookings = () => {
           {bookings.filter(b => b.status === 'CONFIRMED').map((booking) => (
             <div key={booking.id} className="bg-white rounded-lg shadow-md p-6 flex flex-col relative">
               <img
-                src={booking.workshop.image || "/1.png"}
+                src={
+                  booking.workshop.image
+                    ? booking.workshop.image.startsWith('/uploads/')
+                      ? 'http://localhost:5000' + booking.workshop.image
+                      : booking.workshop.image
+                    : '/1.png'
+                }
                 alt={booking.workshop.title}
                 className="h-32 w-full object-cover rounded mb-4"
               />

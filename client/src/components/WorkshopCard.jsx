@@ -18,7 +18,13 @@ const WorkshopCard = ({ workshop }) => {
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col">
       <img
-        src={workshop.image}
+        src={
+          workshop.image
+            ? workshop.image.startsWith('/uploads/')
+              ? 'http://localhost:5000' + workshop.image
+              : workshop.image
+            : '/1.png'
+        }
         alt={workshop.title}
         className="h-40 w-full object-cover"
       />
