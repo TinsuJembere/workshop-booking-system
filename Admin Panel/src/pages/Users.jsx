@@ -32,7 +32,7 @@ const Users = () => {
     setLoading(true);
     setError("");
     try {
-      const res = await axios.get("/api/users", { headers: { ...getAuthHeader() } });
+      const res = await axios.get("https://workshop-booking-system-1.onrender.com/api/users", { headers: { ...getAuthHeader() } });
       setUsers(Array.isArray(res.data) ? res.data : res.data.users || []);
     } catch (err) {
       setError(err.response?.data?.message || err.message || "Failed to load users.");
@@ -49,7 +49,7 @@ const Users = () => {
   const handleApprove = async (id) => {
     setActionLoading(id);
     try {
-      await axios.put(`/api/users/${id}/approve`, {}, { headers: { ...getAuthHeader() } });
+      await axios.put(`https://workshop-booking-system-1.onrender.com/api/users/${id}/approve`, {}, { headers: { ...getAuthHeader() } });
       fetchUsers();
     } catch (err) {
       setError(err.response?.data?.message || err.message || "Failed to approve user.");
@@ -61,7 +61,7 @@ const Users = () => {
   const handleDecline = async (id) => {
     setActionLoading(id);
     try {
-      await axios.put(`/api/users/${id}/decline`, {}, { headers: { ...getAuthHeader() } });
+      await axios.put(`https://workshop-booking-system-1.onrender.com/api/users/${id}/decline`, {}, { headers: { ...getAuthHeader() } });
       fetchUsers();
     } catch (err) {
       setError(err.response?.data?.message || err.message || "Failed to decline user.");
@@ -88,9 +88,9 @@ const Users = () => {
     setError("");
     try {
       if (modalMode === "add") {
-        await axios.post("/api/users", form, { headers: { ...getAuthHeader() } });
+        await axios.post("https://workshop-booking-system-1.onrender.com/api/users", form, { headers: { ...getAuthHeader() } });
       } else if (modalMode === "edit" && selectedUser) {
-        await axios.put(`/api/users/${selectedUser.id}`, form, { headers: { ...getAuthHeader() } });
+        await axios.put(`https://workshop-booking-system-1.onrender.com/api/users/${selectedUser.id}`, form, { headers: { ...getAuthHeader() } });
       }
       fetchUsers();
       handleCloseModal();
@@ -104,7 +104,7 @@ const Users = () => {
     setActionLoading(id);
     setError("");
     try {
-      await axios.delete(`/api/users/${id}`, { headers: { ...getAuthHeader() } });
+      await axios.delete(`https://workshop-booking-system-1.onrender.com/api/users/${id}`, { headers: { ...getAuthHeader() } });
       fetchUsers();
       setDeleteId(null);
     } catch (err) {

@@ -48,7 +48,7 @@ const Bookings = () => {
   useEffect(() => {
     const fetchWorkshops = async () => {
       try {
-        const res = await axios.get("/api/workshops", { 
+        const res = await axios.get("https://workshop-booking-system-1.onrender.com/api/workshops", { 
           headers: { 
             ...getAuthHeader(),
             'x-admin-panel': 'true'
@@ -77,7 +77,7 @@ const Bookings = () => {
           startDate: dateRange.start,
           endDate: dateRange.end
         };
-        const res = await axios.get("/api/bookings", {
+        const res = await axios.get("https://workshop-booking-system-1.onrender.com/api/bookings", {
           params,
           headers: {
             ...getAuthHeader(),
@@ -143,7 +143,7 @@ const Bookings = () => {
     setSaving(true);
     setError("");
     try {
-      await axios.put(`/api/bookings/${selectedBooking.id}`, form, { 
+      await axios.put(`https://workshop-booking-system-1.onrender.com/api/bookings/${selectedBooking.id}`, form, { 
         headers: { ...getAuthHeader() } 
       });
       
@@ -157,7 +157,7 @@ const Bookings = () => {
         startDate: dateRange.start,
         endDate: dateRange.end
       };
-      const res = await axios.get("/api/bookings", {
+      const res = await axios.get("https://workshop-booking-system-1.onrender.com/api/bookings", {
         params,
         headers: { ...getAuthHeader() },
       });
@@ -177,7 +177,7 @@ const Bookings = () => {
     setError("");
     try {
       console.log('Attempting to delete booking with ID:', id);
-      const response = await axios.delete(`/api/bookings/${id}`, { headers: { ...getAuthHeader() } });
+      const response = await axios.delete(`https://workshop-booking-system-1.onrender.com/api/bookings/${id}`, { headers: { ...getAuthHeader() } });
       console.log('Delete response:', response.data);
       
       // Refresh bookings
@@ -190,7 +190,7 @@ const Bookings = () => {
         startDate: dateRange.start,
         endDate: dateRange.end
       };
-      const res = await axios.get("/api/bookings", {
+      const res = await axios.get("https://workshop-booking-system-1.onrender.com/api/bookings", {
         params,
         headers: { ...getAuthHeader() },
       });

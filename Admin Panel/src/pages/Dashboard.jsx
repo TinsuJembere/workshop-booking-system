@@ -25,22 +25,22 @@ const Dashboard = () => {
     setLoading(true);
     setError(null);
     Promise.all([
-      fetch("/api/stats/overview", { headers: { ...getAuthHeader() } })
+      fetch("https://workshop-booking-system-1.onrender.com/api/stats/overview", { headers: { ...getAuthHeader() } })
         .then(async r => {
           if (!r.ok) throw new Error('Failed to load overview');
           return r.json();
         }),
-      fetch("/api/stats/monthly", { headers: { ...getAuthHeader() } })
+      fetch("https://workshop-booking-system-1.onrender.com/api/stats/monthly", { headers: { ...getAuthHeader() } })
         .then(async r => {
           if (!r.ok) throw new Error('Failed to load monthly stats');
           return r.json();
         }),
-      fetch("/api/stats/popularity", { headers: { ...getAuthHeader() } })
+      fetch("https://workshop-booking-system-1.onrender.com/api/stats/popularity", { headers: { ...getAuthHeader() } })
         .then(async r => {
           if (!r.ok) throw new Error('Failed to load popularity stats');
           return r.json();
         }),
-      fetch("/api/stats/recent-bookings", { headers: { ...getAuthHeader() } })
+      fetch("https://workshop-booking-system-1.onrender.com/api/stats/recent-bookings", { headers: { ...getAuthHeader() } })
         .then(async r => {
           if (!r.ok) throw new Error('Failed to load recent bookings');
           return r.json();

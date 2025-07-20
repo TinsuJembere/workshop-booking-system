@@ -44,13 +44,13 @@ const TimeSlots = () => {
       setError("");
       try {
         const [wsRes, tsRes] = await Promise.all([
-          axios.get("/api/workshops", { 
+          axios.get("https://workshop-booking-system-1.onrender.com/api/workshops", { 
             headers: { 
               ...getAuthHeader(),
               'x-admin-panel': 'true'
             } 
           }),
-          axios.get("/api/timeslots", { headers: { ...getAuthHeader() } })
+          axios.get("https://workshop-booking-system-1.onrender.com/api/timeslots", { headers: { ...getAuthHeader() } })
         ]);
         setWorkshops(Array.isArray(wsRes.data.workshops) ? wsRes.data.workshops : []);
         setSlots(Array.isArray(tsRes.data) ? tsRes.data : []);
@@ -153,12 +153,12 @@ const TimeSlots = () => {
     setError("");
     try {
       if (modalMode === "add") {
-        await axios.post("/api/timeslots", form, { headers: { ...getAuthHeader() } });
+        await axios.post("https://workshop-booking-system-1.onrender.com/api/timeslots", form, { headers: { ...getAuthHeader() } });
       } else if (modalMode === "edit" && selectedSlot) {
-        await axios.put(`/api/timeslots/${selectedSlot.id}`, form, { headers: { ...getAuthHeader() } });
+        await axios.put(`https://workshop-booking-system-1.onrender.com/api/timeslots/${selectedSlot.id}`, form, { headers: { ...getAuthHeader() } });
       }
       // Refresh
-      const tsRes = await axios.get("/api/timeslots", { headers: { ...getAuthHeader() } });
+      const tsRes = await axios.get("https://workshop-booking-system-1.onrender.com/api/timeslots", { headers: { ...getAuthHeader() } });
       setSlots(Array.isArray(tsRes.data) ? tsRes.data : []);
       handleCloseModal();
     } catch (err) {
@@ -172,9 +172,9 @@ const TimeSlots = () => {
     if (!window.confirm("Are you sure you want to delete this time slot?")) return;
     setError("");
     try {
-      await axios.delete(`/api/timeslots/${id}`, { headers: { ...getAuthHeader() } });
+      await axios.delete(`https://workshop-booking-system-1.onrender.com/api/timeslots/${id}`, { headers: { ...getAuthHeader() } });
       // Refresh
-      const tsRes = await axios.get("/api/timeslots", { headers: { ...getAuthHeader() } });
+      const tsRes = await axios.get("https://workshop-booking-system-1.onrender.com/api/timeslots", { headers: { ...getAuthHeader() } });
       setSlots(Array.isArray(tsRes.data) ? tsRes.data : []);
     } catch (err) {
       setError(err.response?.data?.message || err.message || "Failed to delete time slot.");

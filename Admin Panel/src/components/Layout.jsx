@@ -22,7 +22,7 @@ const Layout = () => {
     setError("");
     try {
       const token = localStorage.getItem("admin-token");
-      const res = await fetch(`${API_BASE}/api/users/notifications`, {
+      const res = await fetch(`https://workshop-booking-system-1.onrender.com/api/users/notifications`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -49,7 +49,7 @@ const Layout = () => {
   const handleMarkRead = async (id) => {
     try {
       const token = localStorage.getItem("admin-token");
-      await fetch(`${API_BASE}/api/users/notifications/${id}/read`, {
+      await fetch(`https://workshop-booking-system-1.onrender.com/api/users/notifications/${id}/read`, {
         method: "PUT",
         headers: { Authorization: `Bearer ${token}` },
       });
