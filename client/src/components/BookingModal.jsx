@@ -21,7 +21,7 @@ const BookingModal = ({ workshop, onClose, initialSlotId = "", isEditMode = fals
       const user = JSON.parse(localStorage.getItem("user"));
       const token = localStorage.getItem("token");
       const res = await axios.post(
-        "/api/bookings",
+        "https://workshop-booking-system-1.onrender.com/api/bookings",
         {
           workshopId: workshop.id,
           timeSlotId: selectedSlot,

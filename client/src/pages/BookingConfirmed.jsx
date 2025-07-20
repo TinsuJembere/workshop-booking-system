@@ -21,7 +21,7 @@ const BookingConfirmed = () => {
       setLoading(true);
       setError("");
       try {
-        const res = await axios.get(`/api/bookings/${confirmationId}`);
+        const res = await axios.get(`https://workshop-booking-system-1.onrender.com/api/bookings/${confirmationId}`);
         setBooking(res.data);
       } catch (err) {
         setError("Booking not found.");

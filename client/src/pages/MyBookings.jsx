@@ -60,7 +60,7 @@ const MyBookings = () => {
     if (!bookingToDelete) return;
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`/api/bookings/${bookingToDelete}`, {
+      await axios.delete(`https://workshop-booking-system-1.onrender.com/api/bookings/${bookingToDelete}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setBookings(prev => prev.filter(b => b.id !== bookingToDelete));
@@ -78,7 +78,7 @@ const MyBookings = () => {
     }
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`/api/bookings/${bookingId}`, {
+      await axios.delete(`https://workshop-booking-system-1.onrender.com/api/bookings/${bookingId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setBookings(prev => prev.filter(b => b.id !== bookingId)); // Remove from UI
@@ -91,7 +91,7 @@ const MyBookings = () => {
   const handleUpdate = async (bookingId, updatedData) => {
     try {
       const token = localStorage.getItem("token");
-      await axios.put(`/api/bookings/${bookingId}`, updatedData, {
+      await axios.put(`https://workshop-booking-system-1.onrender.com/api/bookings/${bookingId}`, updatedData, {
         headers: { Authorization: `Bearer ${token}` },
       });
       await fetchBookings();
@@ -106,7 +106,7 @@ const MyBookings = () => {
     if (!editingBooking) return;
     try {
       const token = localStorage.getItem("token");
-      await axios.put(`/api/bookings/${editingBooking.id}`, {
+      await axios.put(`https://workshop-booking-system-1.onrender.com/api/bookings/${editingBooking.id}`, {
         timeSlotId: selectedSlotId,
       }, {
         headers: { Authorization: `Bearer ${token}` },
@@ -115,7 +115,7 @@ const MyBookings = () => {
       setShowEditModal(false);
       setEditingBooking(null);
       // Refresh bookings
-      const res = await axios.get("/api/bookings/my", {
+      const res = await axios.get("https://workshop-booking-system-1.onrender.com/api/bookings/my", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setBookings(res.data);
@@ -130,7 +130,7 @@ const MyBookings = () => {
       setError("");
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get("/api/bookings/my", {
+        const res = await axios.get("https://workshop-booking-system-1.onrender.com/api/bookings/my", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setBookings(res.data);

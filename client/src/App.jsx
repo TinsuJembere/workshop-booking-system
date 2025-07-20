@@ -44,7 +44,7 @@ function AppContent() {
       const params = { page, limit };
       if (filters.search) params.search = filters.search;
       if (filters.category) params.category = filters.category;
-      const res = await axios.get("/api/workshops", { params });
+      const res = await axios.get("https://workshop-booking-system-1.onrender.com/api/workshops", { params });
       setWorkshops(res.data.workshops);
       setTotal(res.data.total);
     } catch (err) {

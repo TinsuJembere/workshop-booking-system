@@ -15,7 +15,7 @@ const Login = () => {
     setError("");
     setLoading(true);
     try {
-      const res = await axios.post("/api/auth/login", { email, password });
+      const res = await axios.post("https://workshop-booking-system-1.onrender.com/api/auth/login", { email, password });
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
       window.dispatchEvent(new Event("auth"));
