@@ -86,7 +86,7 @@ const BookingConfirmed = () => {
           <img src={
             booking.workshop.image
               ? booking.workshop.image.startsWith('/uploads/')
-                ? 'http://localhost:5000' + booking.workshop.image
+                ? 'https://workshop-booking-system-1.onrender.com' + booking.workshop.image
                 : booking.workshop.image
               : '/1.png'
           } alt="Workshop" className="rounded-lg w-full h-48 object-cover mb-4" />

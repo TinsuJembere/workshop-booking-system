@@ -21,6 +21,8 @@ const statusLabels = {
   Draft: "Draft"
 };
 
+const API_BASE = 'https://workshop-booking-system-1.onrender.com';
+
 const Workshops = () => {
   const [workshops, setWorkshops] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -49,7 +51,7 @@ const Workshops = () => {
       setLoading(true);
       setError("");
       try {
-        const res = await axios.get("/api/workshops", { 
+        const res = await axios.get(`${API_BASE}/api/workshops`, { 
           headers: { 
             ...getAuthHeader(),
             'x-admin-panel': 'true'
@@ -133,12 +135,12 @@ const Workshops = () => {
         formData.append('image', form.image);
       }
       if (modalMode === "add") {
-        await axios.post("/api/workshops", formData, { headers: { ...getAuthHeader(), 'Content-Type': 'multipart/form-data' } });
+        await axios.post(`${API_BASE}/api/workshops`, formData, { headers: { ...getAuthHeader(), 'Content-Type': 'multipart/form-data' } });
       } else if (modalMode === "edit" && selectedWorkshop) {
-        await axios.put(`/api/workshops/${selectedWorkshop.id}`, formData, { headers: { ...getAuthHeader(), 'Content-Type': 'multipart/form-data' } });
+        await axios.put(`${API_BASE}/api/workshops/${selectedWorkshop.id}`, formData, { headers: { ...getAuthHeader(), 'Content-Type': 'multipart/form-data' } });
       }
       // Refresh
-      const res = await axios.get("/api/workshops", { 
+      const res = await axios.get(`${API_BASE}/api/workshops`, { 
         headers: { 
           ...getAuthHeader(),
           'x-admin-panel': 'true'
@@ -157,9 +159,9 @@ const Workshops = () => {
     if (!window.confirm("Are you sure you want to delete this workshop?")) return;
     setError("");
     try {
-      await axios.delete(`/api/workshops/${id}`, { headers: { ...getAuthHeader() } });
+      await axios.delete(`${API_BASE}/api/workshops/${id}`, { headers: { ...getAuthHeader() } });
       // Refresh
-      const res = await axios.get("/api/workshops", { 
+      const res = await axios.get(`${API_BASE}/api/workshops`, { 
         headers: { 
           ...getAuthHeader(),
           'x-admin-panel': 'true'

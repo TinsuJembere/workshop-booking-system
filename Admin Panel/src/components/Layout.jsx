@@ -15,12 +15,14 @@ const Layout = () => {
   const [error, setError] = React.useState("");
   const unreadCount = notifications.filter(n => !n.read).length;
 
+  const API_BASE = 'https://workshop-booking-system-1.onrender.com';
+
   const fetchNotifications = async () => {
     setLoading(true);
     setError("");
     try {
       const token = localStorage.getItem("admin-token");
-      const res = await fetch("/api/users/notifications", {
+      const res = await fetch(`${API_BASE}/api/users/notifications`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -47,7 +49,7 @@ const Layout = () => {
   const handleMarkRead = async (id) => {
     try {
       const token = localStorage.getItem("admin-token");
-      await fetch(`/api/users/notifications/${id}/read`, {
+      await fetch(`${API_BASE}/api/users/notifications/${id}/read`, {
         method: "PUT",
         headers: { Authorization: `Bearer ${token}` },
       });

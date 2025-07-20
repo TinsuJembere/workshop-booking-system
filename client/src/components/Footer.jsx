@@ -12,7 +12,7 @@ const Footer = () => {
       return;
     }
     try {
-      await axios.post("http://localhost:5000/api/auth/subscribe", { email });
+      await axios.post("https://workshop-booking-system-1.onrender.com/api/auth/subscribe", { email });
       window.alert("Subscribed successfully! You'll receive updates in your inbox.");
       setEmail("");
     } catch (err) {

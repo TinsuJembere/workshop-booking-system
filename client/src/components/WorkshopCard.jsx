@@ -21,7 +21,7 @@ const WorkshopCard = ({ workshop }) => {
         src={
           workshop.image
             ? workshop.image.startsWith('/uploads/')
-              ? 'http://localhost:5000' + workshop.image
+              ? 'https://workshop-booking-system-1.onrender.com' + workshop.image
               : workshop.image
             : '/1.png'
         }
